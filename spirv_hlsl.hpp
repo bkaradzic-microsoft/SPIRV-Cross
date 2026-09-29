@@ -179,6 +179,10 @@ public:
 		// This relies on UserTypeGOOGLE to encode the buffer type either as "structuredbuffer" or "rwstructuredbuffer"
 		// whereas the type can be extended with an optional subtype, e.g. "structuredbuffer:int".
 		bool preserve_structured_buffers = false;
+
+		// Emit [fastopt] on rolled loops containing other loops to avoid FXC dropping
+		// arithmetic on saturated values during loop simulation. Leave disabled for DXC.
+		bool enable_fxc_nested_loop_workaround = false;
 	};
 
 	struct OptionsGLSL

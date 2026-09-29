@@ -5862,6 +5862,25 @@ string CompilerHLSL::compile()
 
 void CompilerHLSL::emit_block_hints(const SPIRBlock &block)
 {
+	if (hlsl_options.enable_fxc_nested_loop_workaround && block.merge == SPIRBlock::MergeLoop &&
+	    block.hint != SPIRBlock::HintUnroll)
+	{
+		bool contains_loop = false;
+		std::unordered_set<uint32_t> seen;
+		get_cfg_for_current_function().walk_from(seen, block.self, [&](uint32_t id) {
+			if (contains_loop || id == block.merge_block)
+				return false;
+			if (id != block.self && this->get<SPIRBlock>(id).merge == SPIRBlock::MergeLoop)
+			{
+				contains_loop = true;
+				return false;
+			}
+			return true;
+		});
+		if (contains_loop)
+			statement("[fastopt]");
+	}
+
 	switch (block.hint)
 	{
 	case SPIRBlock::HintFlatten:
@@ -8344,6 +8363,8 @@ void CompilerHLSL::emit_block_chain(SPIRBlock &block)
 		// for (;;) { create-temporary; break; } consume-temporary;
 		// so force-declare temporaries here.
 		emit_hoisted_temporaries(block.potential_declare_temporary);
+		if (hlsl_options.enable_fxc_nested_loop_workaround)
+			emit_block_hints(block);
 		statement("do");
 		begin_scope();
 
@@ -20939,4 +20960,3 @@ void CompilerHLSL::emit_spv_amd_gcn_shader_op(uint32_t, uint32_t, uint32_t, cons
 	SPIRV_CROSS_THROW("Invalid call.");
 }
 #endif
-

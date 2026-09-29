@@ -1,0 +1,45 @@
+#version 450
+#extension GL_EXT_control_flow_attributes : require
+
+layout(local_size_x = 1) in;
+layout(set = 0, binding = 0, std430) buffer Data
+{
+    float values[];
+};
+layout(set = 0, binding = 1) uniform Parameters
+{
+    int outerCount;
+    int innerCount;
+    float amount;
+};
+
+void main()
+{
+    float value = values[gl_GlobalInvocationID.x];
+    int i = 0;
+    while (i < outerCount)
+    {
+        for (int j = 0; j < innerCount; j++)
+            value = clamp(value, 0.0, 1.0) * amount + float(j);
+        i++;
+    }
+
+    i = 0;
+    do
+    {
+        for (int j = 0; j < innerCount; j++)
+            value = clamp(value, 0.0, 1.0) * amount - float(j);
+        i++;
+    } while (i < outerCount);
+
+    for (int j = 0; j < innerCount; j++)
+        value += float(j);
+
+    [[unroll]] for (int k = 0; k < 2; k++)
+    {
+        for (int j = 0; j < innerCount; j++)
+            value += amount * float(j + k);
+    }
+
+    values[gl_GlobalInvocationID.x] = value;
+}

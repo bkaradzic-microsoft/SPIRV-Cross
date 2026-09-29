@@ -630,3 +630,12 @@ if (SPIRV_CROSS_CLI)
 		endif()
 	endif()
 endif()
+
+if(SPIRV_CROSS_ENABLE_TESTS AND SPIRV_CROSS_STATIC AND SPIRV_CROSS_ENABLE_HLSL)
+	add_executable(spirv-cross-hlsl-nested-loop-test tests-other/hlsl_nested_loop.cpp)
+	target_link_libraries(spirv-cross-hlsl-nested-loop-test PRIVATE spirv-cross-hlsl)
+	add_test(NAME spirv-cross-hlsl-nested-loop-test
+	         COMMAND spirv-cross-hlsl-nested-loop-test
+	         ${CMAKE_CURRENT_SOURCE_DIR}/tests-other/hlsl_nested_loop.spv
+	         ${CMAKE_CURRENT_BINARY_DIR})
+endif()
