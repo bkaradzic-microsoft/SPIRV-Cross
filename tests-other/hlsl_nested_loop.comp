@@ -55,5 +55,13 @@ void main()
             value += amount * float(j + k);
     }
 
+    i = 0;
+    [[unroll]] do
+    {
+        for (int j = 0; j < innerCount; j++)
+            value += amount * float(j + i);
+        i++;
+    } while (i < outerCount);
+
     values[gl_GlobalInvocationID.x] = value;
 }

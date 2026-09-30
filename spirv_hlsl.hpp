@@ -431,6 +431,7 @@ private:
 	void emit_store(const Instruction &instruction);
 	void emit_atomic(const uint32_t *ops, uint32_t length, spv::Op op);
 	void emit_subgroup_op(const Instruction &i);
+	void emit_fxc_nested_loop_hint(const SPIRBlock &block);
 	void emit_block_hints(const SPIRBlock &block);
 
 	void emit_struct_member(const SPIRType &type, uint32_t member_type_id, uint32_t index, const std::string &qualifier = "",

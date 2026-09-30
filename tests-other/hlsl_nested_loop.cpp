@@ -68,8 +68,8 @@ int main(int argc, char **argv)
 		}
 		if (count_text(sources[0], "[fastopt]") != 0 || count_text(sources[1], "[fastopt]") != 2)
 			throw std::runtime_error("Only the two rolled outer loops should receive [fastopt].");
-		if (count_text(sources[1], "[unroll]") != 1)
-			throw std::runtime_error("The explicit unroll hint must be preserved.");
+		if (count_text(sources[0], "[unroll]") != 1 || count_text(sources[1], "[unroll]") != 1)
+			throw std::runtime_error("Enabling the workaround must not add an unroll hint to do-while loops.");
 
 		std::istringstream lines(sources[1]);
 		std::string stripped, line;

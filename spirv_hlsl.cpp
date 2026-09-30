@@ -5860,7 +5860,7 @@ string CompilerHLSL::compile()
 	return buffer.str();
 }
 
-void CompilerHLSL::emit_block_hints(const SPIRBlock &block)
+void CompilerHLSL::emit_fxc_nested_loop_hint(const SPIRBlock &block)
 {
 	if (hlsl_options.enable_fxc_nested_loop_workaround && block.merge == SPIRBlock::MergeLoop &&
 	    block.hint != SPIRBlock::HintUnroll)
@@ -5880,7 +5880,11 @@ void CompilerHLSL::emit_block_hints(const SPIRBlock &block)
 		if (contains_loop)
 			statement("[fastopt]");
 	}
+}
 
+void CompilerHLSL::emit_block_hints(const SPIRBlock &block)
+{
+	emit_fxc_nested_loop_hint(block);
 	switch (block.hint)
 	{
 	case SPIRBlock::HintFlatten:
@@ -8364,7 +8368,7 @@ void CompilerHLSL::emit_block_chain(SPIRBlock &block)
 		// so force-declare temporaries here.
 		emit_hoisted_temporaries(block.potential_declare_temporary);
 		if (hlsl_options.enable_fxc_nested_loop_workaround)
-			emit_block_hints(block);
+			emit_fxc_nested_loop_hint(block);
 		statement("do");
 		begin_scope();
 

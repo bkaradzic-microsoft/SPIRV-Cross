@@ -516,7 +516,8 @@ arithmetic miscompilation during nested-loop simulation. It is disabled by
 default and is not intended for DXC; explicit unroll hints are preserved.
 
 The `spirv-cross-hlsl-nested-loop-test` CTest target checks the opt-in behavior,
-while/do-while coverage, explicit unroll hints, and unchanged output apart from
+while/do-while coverage (including explicitly unrolled do-while loops), explicit
+unroll hints, and unchanged output apart from
 the added hints. It is also available with `SPIRV_CROSS_CLI=OFF` when static HLSL
 support and `SPIRV_CROSS_ENABLE_TESTS` are enabled. Regenerate its SPIR-V fixture
 using the glslang revision pinned in `checkout_glslang_spirv_tools.sh`:
